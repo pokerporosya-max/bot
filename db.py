@@ -83,3 +83,33 @@ async def update_cactus(user_id, grow):
         SET cactus = cactus + $1
         WHERE user_id=$2
         """, grow, user_id)
+# ---------------------------
+# ТОПЫ
+# ---------------------------
+
+async def top_balance():
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT username, balance
+        FROM users
+        ORDER BY balance DESC
+        LIMIT 10
+        """)
+
+async def top_games():
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT username, games
+        FROM users
+        ORDER BY games DESC
+        LIMIT 10
+        """)
+
+async def top_cactus():
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT username, cactus
+        FROM users
+        ORDER BY cactus DESC
+        LIMIT 10
+        """)
