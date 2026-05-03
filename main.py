@@ -30,6 +30,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🎮 Gachyx\n\n➕ Добавить в группу"
     )
 
+async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    top_users = get_top()
+    my_rank = get_user_rank(user_id)
+    me = get_user(user_id)
+
+    text = "🏆 ТОП БАЛАНСА\n\n"
+
+    medals = ["🥇", "🥈", "🥉"]
+
+    for i, u in enumerate(top_users):
+        mark = medals[i] if i < 3 else f"{i+1}."
+        text += f"{mark} {u[1]} — {u[2]} 🍬\n"
+
+    text += f"\n──────────────\n"
+    text += f"👤 Ты: {me[1]}\n"
+    text += f"📍 Место: #{my_rank}\n"
+    text += f"💰 Баланс: {me[2]} 🍬"
+
+    await update.message.reply_text(text)
 
 # ---------- PROFILE ----------
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
