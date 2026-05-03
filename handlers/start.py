@@ -19,7 +19,7 @@ async def start(message: Message):
         message.from_user.username
     )
 
-    # кнопка в группу (инлайн)
+    # 🔗 кнопка добавления в группу
     inline_kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
@@ -29,7 +29,7 @@ async def start(message: Message):
         ]
     ])
 
-    # 🔥 ВОЗВРАЩАЕМ ТВОЁ МЕНЮ (как было)
+    # 📱 главное меню
     menu = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="👤 Профиль"), KeyboardButton(text="🎁 Бонус")],
@@ -37,20 +37,23 @@ async def start(message: Message):
             [KeyboardButton(text="❓ Помощь"), KeyboardButton(text="ℹ️ О нас")],
             [KeyboardButton(text="💖 Поддержать"), KeyboardButton(text="📄 Соглашение")]
         ],
-        resize_keyboard=True
+        resize_keyboard=True,
+        input_field_placeholder="Выбери действие 👇"
     )
 
-    # приветствие
+    # 👋 приветствие
     await message.answer(
-        "👋 Привет!\n\n"
+        "👋 <b>Привет!</b>\n\n"
         "Добро пожаловать в игрового бота 🍬\n"
-        "Играй, зарабатывай и попадай в топ 🏆\n\n"
-        "Добавь бота в группу 👇",
-        reply_markup=inline_kb
+        "Зарабатывай конфеты, играй и попадай в топ 🏆\n\n"
+        "Добавь бота в группу, чтобы играть с друзьями 👇",
+        reply_markup=inline_kb,
+        parse_mode="HTML"
     )
 
-    # меню (КАК У ТЕБЯ БЫЛО)
+    # 📋 меню
     await message.answer(
-        "👇 Меню бота",
-        reply_markup=menu
+        "👇 <b>Меню бота</b>",
+        reply_markup=menu,
+        parse_mode="HTML"
     )
