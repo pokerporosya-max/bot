@@ -51,3 +51,21 @@ def set_bonus_time(user_id, t):
 
 def reset_db():
     cur.execute("TRUNCATE TABLE users RESTART IDENTITY")
+
+def get_top(limit=10):
+    cur.execute("""
+        SELECT user_id, name, balance
+        FROM users
+        ORDER BY balance DESC
+        LIMIT %s
+    """, (limit,))
+    return cur.fetchall()
+
+
+def get_user_rank(user_id):
+    cur.execute("""
+        SELECT COUNT(*) + 1
+        FROM users
+        WHERE balance > (SELECT balance FROM users WHERE user_id=%s)
+    """, (user_id,))
+    return cur.fetchone()[0]
