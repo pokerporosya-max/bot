@@ -1,36 +1,34 @@
-from aiogram import Router
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
-from db import add_user
+from aiogram import Router, F
+from aiogram.types import Message
+from db import get_user
 
 router = Router()
 
-@router.message(lambda m: m.text == "/start")
-async def start_cmd(message: Message):
-    await add_user(message.from_user.id, message.from_user.username)
+# 👤 ПРОФИЛЬ (из группы и ЛС через кнопку)
+@router.message(F.text == "👤 Профиль")
+async def profile(message: Message):
 
-    # инлайн кнопка (добавить в группу)
-    inline_kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="➕ Добавить бота в чат", url="https://t.me/GachyxBot?startgroup=true")]
-    ])
+    user = await get_user(message.from_user.id)
 
-    # меню клавиатура
-    menu = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="👤 Профиль"), KeyboardButton(text="🎁 Бонус")],
-            [KeyboardButton(text="🛒 Магазин"), KeyboardButton(text="🎮 Игры")],
-            [KeyboardButton(text="❓ Помощь"), KeyboardButton(text="ℹ️ О нас")],
-            [KeyboardButton(text="💖 Поддержать"), KeyboardButton(text="📄 Соглашение")]
-        ],
-        resize_keyboard=True
+    if not user:
+        return await message.answer("❌ Профиль не найден")
+
+    cactus_value = user["cactus"]
+
+    if cactus_value >= 100:
+        cactus_text = f"{cactus_value / 100:.2f} м"
+    else:
+        cactus_text = f"{cactus_value} см"
+
+    text = (
+        f"👤 Профиль\n\n"
+        f"Имя: @{user['username']}\n"
+        f"ID: {user['user_id']}\n\n"
+        f"💰 Баланс: {user['balance']} 🍬\n"
+        f"🌵 Кактус: {cactus_text}\n\n"
+        f"🎮 Сыграно: {user['games']}\n"
+        f"🏆 Победы: {user['wins']}\n"
+        f"💀 Поражения: {user['loses']}"
     )
 
-    await message.answer(
-        "Привет 👋\n\nДобро пожаловать в игрового бота.\n\nДобавь бота в чат, чтобы начать игру вместе с друзьями.",
-        reply_markup=inline_kb
-    )
-
-    # открываем меню
-    await message.answer(
-        "👇 Меню бота",
-        reply_markup=menu
-    )
+    await message.answer(text)
