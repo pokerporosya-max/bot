@@ -21,7 +21,10 @@ async def init_db():
 
             games INT DEFAULT 0,
             wins INT DEFAULT 0,
-            loses INT DEFAULT 0
+            loses INT DEFAULT 0,
+
+            last_bonus BIGINT DEFAULT 0,
+            last_cactus BIGINT DEFAULT 0
         )
         """)
 
@@ -35,6 +38,7 @@ async def add_user(user_id, username):
         VALUES ($1, $2)
         ON CONFLICT (user_id) DO NOTHING
         """, user_id, username)
+
 
 async def get_user(user_id):
     async with pool.acquire() as conn:
@@ -83,33 +87,23 @@ async def update_cactus(user_id, grow):
         SET cactus = cactus + $1
         WHERE user_id=$2
         """, grow, user_id)
+
 # ---------------------------
-# ТОПЫ
+# КД ОБНОВЛЕНИЕ (УНИВЕРСАЛЬНО)
 # ---------------------------
-
-async def top_balance():
+async def set_last_bonus(user_id, timestamp):
     async with pool.acquire() as conn:
-        return await conn.fetch("""
-        SELECT username, balance
-        FROM users
-        ORDER BY balance DESC
-        LIMIT 10
-        """)
+        await conn.execute("""
+        UPDATE users
+        SET last_bonus=$1
+        WHERE user_id=$2
+        """, timestamp, user_id)
 
-async def top_games():
-    async with pool.acquire() as conn:
-        return await conn.fetch("""
-        SELECT username, games
-        FROM users
-        ORDER BY games DESC
-        LIMIT 10
-        """)
 
-async def top_cactus():
+async def set_last_cactus(user_id, timestamp):
     async with pool.acquire() as conn:
-        return await conn.fetch("""
-        SELECT username, cactus
-        FROM users
-        ORDER BY cactus DESC
-        LIMIT 10
-        """)
+        await conn.execute("""
+        UPDATE users
+        SET last_cactus=$1
+        WHERE user_id=$2
+        """, timestamp, user_id)
