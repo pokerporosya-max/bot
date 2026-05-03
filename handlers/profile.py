@@ -1,11 +1,22 @@
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from db import get_user
 
 router = Router()
 
+# 📌 ПРОФИЛЬ (группа текстом)
 @router.message(F.text.lower() == "профиль")
-async def profile(message: Message):
+async def profile_text(message: Message):
+    await send_profile(message)
+
+# 📌 ПРОФИЛЬ (кнопка в ЛС)
+@router.callback_query(F.data == "profile")
+async def profile_button(callback: CallbackQuery):
+    await send_profile(callback.message)
+    await callback.answer()
+
+# 📌 ОБЩАЯ ФУНКЦИЯ
+async def send_profile(message: Message):
 
     user = await get_user(message.from_user.id)
 
@@ -14,7 +25,6 @@ async def profile(message: Message):
 
     cactus_value = user["cactus"]
 
-    # формат кактуса
     if cactus_value >= 100:
         cactus_text = f"{cactus_value / 100:.2f} м"
     else:
