@@ -3,7 +3,7 @@ from aiogram.types import Message
 
 router = Router()
 
-@router.message(F.text.lower() == "помощь")
+@router.message(F.text.lower().contains("помощь"))
 async def help_cmd(message: Message):
 
     await message.answer(
