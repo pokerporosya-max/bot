@@ -1,29 +1,30 @@
+import time
 from aiogram import Router, F
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from db import update_balance
+from aiogram.types import Message
+from db import get_user, update_balance
 
 router = Router()
 
-@router.message(F.text == "🎁 Бонус")
+COOLDOWN = 24 * 60 * 60  # 24 часа
+
+@router.message(F.text.lower().contains("бонус"))
 async def bonus(message: Message):
 
-    # если не ЛС — отправляем переход
-    if message.chat.type != "private":
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(
-                text="🚀 Перейти в бота",
-                url="https://t.me/GachyxBot"
-            )]
-        ])
+    user = await get_user(message.from_user.id)
+    now = int(time.time())
 
-        return await message.answer(
-            "🎁 Бонус\n\n"
-            "Чтобы получить награду, перейди в личные сообщения с ботом.\n\n"
-            "⚠️ Бонус можно получить только внутри бота",
-            reply_markup=kb
-        )
+    if now - user["last_bonus"] < COOLDOWN:
+        remaining = COOLDOWN - (now - user["last_bonus"])
+        hours = remaining // 3600
+        return await message.answer(f"⏳ Бонус уже получен\nПопробуй через {hours}ч")
 
-    # если ЛС — выдаём бонус
     await update_balance(message.from_user.id, 2500)
 
-    await message.answer("🎁 Ты получил: 2500 🍬")
+    async with message.bot["db_pool"].acquire() as conn:
+        await conn.execute(
+            "UPDATE users SET last_bonus=$1 WHERE user_id=$2",
+            now,
+            message.from_user.id
+        )
+
+    await message.answer("🎁 Ты получил бонус +2500 🍬")
