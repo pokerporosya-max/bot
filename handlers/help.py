@@ -3,14 +3,15 @@ from aiogram.types import Message
 
 router = Router()
 
-@router.message(F.text == "❓ Помощь")
+@router.message(F.text.lower() == "помощь")
 async def help_cmd(message: Message):
+
     await message.answer(
-        "❓ Помощь\n\n"
-        "👤 Профиль — статистика игрока\n"
+        "📌 Команды бота:\n\n"
+        "👤 Профиль — статистика\n"
         "🎁 Бонус — ежедневная награда\n"
         "🎮 Игры — список игр\n"
-        "🎲 Кубик — игра со ставкой\n"
+        "🎲 Кубик <ставка> — игра\n"
         "🌵 Полить — рост кактуса\n"
-        "📊 Топ — рейтинги игроков"
+        "📊 Топ — рейтинги игроков\n"
     )
