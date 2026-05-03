@@ -5,7 +5,7 @@ from db import update_balance, update_game
 
 router = Router()
 
-@router.message(F.text.startswith("кубик,Кубик"))
+@router.message(F.text.lower().startswith("кубик"))
 async def dice_game(message: Message):
 
     parts = message.text.split()
@@ -18,21 +18,15 @@ async def dice_game(message: Message):
     except:
         return await message.answer("Ставка должна быть числом")
 
-    # отправляем "бросок"
     dice_msg = await message.answer_dice(emoji="🎲")
     roll = dice_msg.dice.value
 
-    # победа
     if roll in [4, 6]:
         win = bet * 2
-
         await update_balance(message.from_user.id, win)
-        await update_game(message.from_user.id, win=True)
-
-        await message.answer(f"🎲 Выпало: {roll}\n🎉 Победа +{win} 🍬")
-
+        await update_game(message.from_user.id, True)
+        await message.answer(f"🎲 {roll}\n🎉 Победа +{win} 🍬")
     else:
         await update_balance(message.from_user.id, -bet)
-        await update_game(message.from_user.id, win=False)
-
-        await message.answer(f"🎲 Выпало: {roll}\n💀 Проигрыш -{bet} 🍬")
+        await update_game(message.from_user.id, False)
+        await message.answer(f"🎲 {roll}\n💀 Проигрыш -{bet} 🍬")
