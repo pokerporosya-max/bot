@@ -5,7 +5,7 @@ from db import update_balance, update_game
 
 router = Router()
 
-@router.message(F.text.startswith("кубик"))
+@router.message(F.text.startswith("кубик,Кубик"))
 async def dice_game(message: Message):
 
     parts = message.text.split()
