@@ -1,24 +1,34 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.types import Message
 from db import get_user
 
 router = Router()
 
-@router.message(lambda m: m.text == "👤 Профиль")
+@router.message(F.text.lower() == "профиль")
 async def profile(message: Message):
+
     user = await get_user(message.from_user.id)
 
-    await message.answer(
-f"""👤 Профиль
+    if not user:
+        return await message.answer("❌ Профиль не найден")
 
-Имя: @{user['username']}
-ID: {user['user_id']}
+    cactus_value = user["cactus"]
 
-💰 Баланс: {user['balance']} 🍬
-🌵 Кактус: {user['cactus']}
+    # формат кактуса
+    if cactus_value >= 100:
+        cactus_text = f"{cactus_value / 100:.2f} м"
+    else:
+        cactus_text = f"{cactus_value} см"
 
-🎮 Сыграно: {user['games']}
-🏆 Победы: {user['wins']}
-💀 Поражения: {user['loses']}
-"""
+    text = (
+        f"👤 Профиль\n\n"
+        f"Имя: @{user['username']}\n"
+        f"ID: {user['user_id']}\n\n"
+        f"💰 Баланс: {user['balance']} 🍬\n"
+        f"🌵 Кактус: {cactus_text}\n\n"
+        f"🎮 Сыграно: {user['games']}\n"
+        f"🏆 Победы: {user['wins']}\n"
+        f"💀 Поражения: {user['loses']}"
     )
+
+    await message.answer(text)
