@@ -107,3 +107,41 @@ async def set_last_cactus(user_id, timestamp):
         SET last_cactus=$1
         WHERE user_id=$2
         """, timestamp, user_id)
+
+# ---------------------------
+# ТОП ПО БАЛАНСУ
+# ---------------------------
+async def top_balance(limit=10):
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT user_id, username, balance
+        FROM users
+        ORDER BY balance DESC
+        LIMIT $1
+        """, limit)
+
+
+# ---------------------------
+# ТОП ПО ИГРАМ
+# ---------------------------
+async def top_games(limit=10):
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT user_id, username, games
+        FROM users
+        ORDER BY games DESC
+        LIMIT $1
+        """, limit)
+
+
+# ---------------------------
+# ТОП ПО КАКТУСУ
+# ---------------------------
+async def top_cactus(limit=10):
+    async with pool.acquire() as conn:
+        return await conn.fetch("""
+        SELECT user_id, username, cactus
+        FROM users
+        ORDER BY cactus DESC
+        LIMIT $1
+        """, limit)
