@@ -20,6 +20,7 @@ from db import (
     get_top,
     get_user_rank
 )
+from joker import start_joker, joker_click
 
 TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
@@ -200,6 +201,8 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text in ["топ"]:
         await top(update, context)
 
+app.add_handler(CommandHandler("joker", start_joker))
+app.add_handler(CallbackQueryHandler(joker_click))
 
 # ---------------- RESET DB ----------------
 async def restart_db(update: Update, context: ContextTypes.DEFAULT_TYPE):
