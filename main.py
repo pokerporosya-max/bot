@@ -17,7 +17,8 @@ from handlers import (
     top,
     help,
     about,
-    terms
+    terms,
+    support
 )
 
 bot = Bot(token=BOT_TOKEN)
@@ -40,6 +41,7 @@ async def main():
     dp.include_router(terms.router)
     dp.include_router(help.router)
     dp.include_router(about.router)
+    dp.include_router(support.router)
 
     # запуск
     await dp.start_polling(bot)
