@@ -5,20 +5,16 @@ from db import update_cactus
 
 router = Router()
 
-@router.message(F.text == "полить")
+@router.message(F.text.lower() == "полить")
 async def cactus(message: Message):
 
     grow = random.randint(1, 12)
 
     await update_cactus(message.from_user.id, grow)
 
-    total = grow  # упрощённый вывод
-
-    if total >= 100:
-        value = f"{total / 100:.2f} м"
+    if grow >= 100:
+        value = f"{grow / 100:.2f} м"
     else:
-        value = f"{total} см"
+        value = f"{grow} см"
 
-    await message.answer(
-        f"🌵 Кактус\n\n+{value}"
-    )
+    await message.answer(f"🌵 Кактус +{value}")
