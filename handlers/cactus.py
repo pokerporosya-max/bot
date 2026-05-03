@@ -5,7 +5,7 @@ from db import update_cactus
 
 router = Router()
 
-@router.message(F.text == "🌵 Полить")
+@router.message(F.text == "полить")
 async def cactus(message: Message):
 
     grow = random.randint(1, 12)
