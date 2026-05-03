@@ -16,7 +16,8 @@ from handlers import (
     admin,
     top,
     help,
-    about
+    about,
+    terms
 )
 
 bot = Bot(token=BOT_TOKEN)
@@ -36,6 +37,7 @@ async def main():
     dp.include_router(transfer.router)
     dp.include_router(admin.router)
     dp.include_router(top.router)
+    dp.include_router(terms.router)
     dp.include_router(help.router)
     dp.include_router(about.router)
 
