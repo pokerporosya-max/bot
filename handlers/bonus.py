@@ -12,7 +12,7 @@ async def bonus(message: Message):
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(
                 text="🚀 Перейти в бота",
-                url="https://t.me/YOUR_BOT_USERNAME"
+                url="https://t.me/GachyxBot"
             )]
         ])
 
