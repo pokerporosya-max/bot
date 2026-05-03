@@ -1,7 +1,7 @@
 import random
 from aiogram import Router, F
 from aiogram.types import Message
-from db import add_cactus
+from db import update_cactus
 
 router = Router()
 
@@ -10,15 +10,15 @@ async def cactus(message: Message):
 
     grow = random.randint(1, 12)
 
-    await add_cactus(message.from_user.id, grow)
+    await update_cactus(message.from_user.id, grow)
 
-    # формат вывода
-    if grow + 0 >= 100:
-        value = f"{(grow + 0) / 100:.2f} м"
+    total = grow  # упрощённый вывод
+
+    if total >= 100:
+        value = f"{total / 100:.2f} м"
     else:
-        value = f"{grow} см"
+        value = f"{total} см"
 
     await message.answer(
-        f"🌵 Кактус полить\n\n"
-        f"+{value}"
+        f"🌵 Кактус\n\n+{value}"
     )
